@@ -17,7 +17,7 @@ Whenever you write or review code that calls the Claude API in a multi-turn or a
 3. If caching is absent, flag it immediately before doing anything else:
    > "Caching not configured: add `cache_control: {"type": "ephemeral"}` to your system prompt block to reduce input costs by up to 90%."
 
-Never approve or extend API code that lacks caching on static blocks.
+Never approve or extend API code that lacks caching on static blocks, unless the prompt is below the model's cacheable minimum (2048 tokens for Fable 5/Sonnet, 4096 for Opus) or the prefix changes on every request.
 
 ---
 
@@ -32,7 +32,7 @@ At the end of every completed user request or todo item, or when the user signal
 > **Rules:** [any non-obvious constraints]"
 
 If you detect you are about to read a directory that is likely to contain compiled assets, logs, or dependencies (e.g., `node_modules`, `dist`, `build`, `.next`, `__pycache__`, `target`), warn the user before reading:
-> "Warning: reading `<dir>` may inflate token count significantly. Add it to .gitignore to prevent this."
+> "Warning: reading `<dir>` may inflate token count significantly. Skip this unless you confirm it's needed. For a durable fix, add it to .gitignore so search tools exclude it automatically."
 
 ---
 
@@ -50,15 +50,17 @@ When you generate API call code, always include `max_tokens` sized to the task t
 - Code generation / refactoring: `max_tokens: 8192`
 - Long-form analysis / documentation: `max_tokens: 16384`
 
+> Note: if adaptive thinking is enabled, thinking tokens consume the `max_tokens` budget. Raise the tier by one step or disable thinking for classification calls.
+
 If the user explicitly asks for detail, walkthroughs, or explanations, this rule is suspended for that response only.
 
-**Exception:** Rules 2 and 4 of this skill override this cap — their required summaries are not preamble or filler.
+**Exception:** Rules 2, 4, and 5 of this skill override this cap — their required outputs are not preamble or filler.
 
 ---
 
 ## Rule 4 — Context Clearing and Session Handoff
 
-If the conversation thread exceeds 20 turns (each user message + assistant response = 1 turn), proactively offer a handoff summary without being asked:
+If the conversation thread exceeds 20 turns (each user message + assistant response = 1 turn), proactively offer a handoff summary once. Repeat the offer only every ~10 turns thereafter if the user has not acted on it:
 > "Thread is getting long. Here is a handoff summary to start a fresh session:
 >
 > **Goal:** [current objective]
@@ -83,4 +85,4 @@ Before executing any multi-step plan, state your routing recommendation explicit
 Format:
 > "Routing: this task is [simple/moderate/complex] → use **[Model]**."
 
-Use **Fable 5** (`claude-fable-5`) only when the user explicitly requests it or the task requires its unique extended context or speed capabilities.
+Use **Fable 5** (`claude-fable-5`) only when the user explicitly requests it, or the task demands frontier reasoning beyond Opus 4.8's capability (note: ~2× Opus 4.8 pricing, and slower).
