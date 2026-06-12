@@ -49,7 +49,7 @@ Calculated from documented Anthropic API pricing (Fable 5: $10/$50 per MTok inpu
 ### 1. Clone into your plugins directory
 
 ```bash
-git clone https://github.com/<your-username>/token-optimizer-skill ~/.claude/plugins/token-optimizer-skill
+git clone https://github.com/yashveer-ux/token-optimizer-skill ~/.claude/plugins/token-optimizer-skill
 ```
 
 ### 2. Add the SessionStart hook
