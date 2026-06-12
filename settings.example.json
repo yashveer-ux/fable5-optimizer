@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "type": "skill",
+        "skill": "token-optimizer-skill:token-optimizer"
+      }
+    ]
+  }
+}
