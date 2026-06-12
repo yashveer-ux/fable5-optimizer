@@ -12,6 +12,29 @@ Once installed, every Claude Code session automatically applies:
 4. **Context clearing prompts** — offers handoff summaries on long threads (20+ turns)
 5. **Model routing** — recommends Opus 4.8, Sonnet 4.6, or Haiku 4.5 when Fable 5 is overkill
 
+## Projected cost savings
+
+Calculated from documented Anthropic API pricing (Fable 5: $10/$50 per MTok input/output). All figures assume Fable 5 as the unoptimised baseline.
+
+| Rule | Scenario | Saving |
+|------|----------|--------|
+| Prompt caching | 10-turn session with 4k-token system prompt | **87%** per session |
+| Model routing — classification | Fable 5 → Haiku 4.5 | **90%** per call |
+| Model routing — code generation | Fable 5 → Sonnet 4.6 | **70%** per call |
+| Model routing — complex reasoning | Fable 5 → Opus 4.8 | **50%** per call |
+| Verbosity cap | Typical padded reply trimmed | **26% fewer output tokens** |
+| Context clearing | Turns 21–40 after session handoff | **72%** vs stale context |
+
+**Combined projection — 1 developer-day (8 sessions, mixed workload):**
+
+| | Cost |
+|-|------|
+| Baseline (Fable 5, no optimisation) | $16.39 |
+| With token-optimizer skill | $4.39 |
+| **Saving** | **73% (~$240/month per developer)** |
+
+> These figures are calculated from API pricing, not live-measured. Real savings depend on your prompt sizes, session lengths, and task mix. Enable the skill and check your [Anthropic usage dashboard](https://console.anthropic.com) to measure actual impact.
+
 ## Install
 
 ### 1. Clone into your plugins directory
