@@ -1,4 +1,4 @@
-# Fable 5 token-optimizer-skill
+# FABLE 5 OPTIMIZER
 
 A Claude Code skill that loads at session start and enforces five token cost-reduction strategies for Fable 5 sessions. Optimized for developers who want to cut API costs without changing how they work.
 
@@ -49,7 +49,7 @@ Calculated from documented Anthropic API pricing (Fable 5: $10/$50 per MTok inpu
 ### 1. Clone into your plugins directory
 
 ```bash
-git clone https://github.com/yashveer-ux/token-optimizer-skill ~/.claude/plugins/token-optimizer-skill
+git clone https://github.com/yashveer-ux/fable5-optimizer ~/.claude/plugins/token-optimizer-skill
 ```
 
 ### 2. Add the SessionStart hook
