@@ -1,6 +1,6 @@
 ---
 name: token-optimizer
-description: Always-on session-start skill enforcing 5 token cost-reduction strategies for Fable 5 sessions
+description: Use when writing Claude API code, planning multi-step tasks, managing session context, or any time you want to minimize token spend across a session
 ---
 
 # Token Optimizer — Always-On Rules
@@ -15,7 +15,7 @@ Whenever you write or review code that calls the Claude API in a multi-turn or a
 1. Check whether `cache_control: {"type": "ephemeral"}` is set at the end of the system prompt block.
 2. Check whether tool definitions have caching applied if they are static across turns.
 3. If caching is absent, flag it immediately before doing anything else:
-   > "Cache miss detected: add `cache_control: {"type": "ephemeral"}` to your system prompt block to reduce input costs by up to 90%."
+   > "Caching not configured: add `cache_control: {"type": "ephemeral"}` to your system prompt block to reduce input costs by up to 90%."
 
 Never approve or extend API code that lacks caching on static blocks.
 
@@ -23,7 +23,7 @@ Never approve or extend API code that lacks caching on static blocks.
 
 ## Rule 2 — Lean CLAUDE.md and Context Pruning
 
-At the end of every sub-task, or when the user signals they are done with a feature, you MUST offer a CLAUDE.md pruning summary unprompted. Format:
+At the end of every completed user request or todo item, or when the user signals they are done with a feature, you MUST offer a CLAUDE.md pruning summary unprompted. Format:
 
 > "CLAUDE.md update (paste to replace current content):
 > **Architecture:** [1-2 sentences]
@@ -32,7 +32,7 @@ At the end of every sub-task, or when the user signals they are done with a feat
 > **Rules:** [any non-obvious constraints]"
 
 If you detect you are about to read a directory that is likely to contain compiled assets, logs, or dependencies (e.g., `node_modules`, `dist`, `build`, `.next`, `__pycache__`, `target`), warn the user before reading:
-> "Warning: reading `<dir>` may inflate token count significantly. Add it to .gitignore or agent-ignore to prevent this."
+> "Warning: reading `<dir>` may inflate token count significantly. Add it to .gitignore to prevent this."
 
 ---
 
@@ -46,20 +46,19 @@ Every response defaults to the minimum words needed to be correct and actionable
 
 When you generate API call code, always include `max_tokens` sized to the task type:
 - Classification / extraction / boolean: `max_tokens: 512`
-- Short Q&A / chat responses: `max_tokens: 1024`
-- Code generation / refactoring: `max_tokens: 2048`
-- Long-form analysis / documentation: `max_tokens: 4096`
+- Short Q&A / chat responses: `max_tokens: 2048`
+- Code generation / refactoring: `max_tokens: 8192`
+- Long-form analysis / documentation: `max_tokens: 16384`
 
 If the user explicitly asks for detail, walkthroughs, or explanations, this rule is suspended for that response only.
+
+**Exception:** Rules 2 and 4 of this skill override this cap — their required summaries are not preamble or filler.
 
 ---
 
 ## Rule 4 — Context Clearing and Session Handoff
 
-When a sub-task completes, prompt the user to clear context before starting the next:
-> "Sub-task complete. Run `/clear` before the next task to avoid paying for stale context."
-
-If the conversation thread exceeds 20 turns, proactively offer a handoff summary without being asked:
+If the conversation thread exceeds 20 turns (each user message + assistant response = 1 turn), proactively offer a handoff summary without being asked:
 > "Thread is getting long. Here is a handoff summary to start a fresh session:
 >
 > **Goal:** [current objective]
@@ -77,11 +76,11 @@ Before executing any multi-step plan, state your routing recommendation explicit
 
 | Task type | Recommended model |
 |-----------|------------------|
-| Complex reasoning, multi-file refactoring, critical logic, long-horizon agentic tasks | **Fable 5** |
+| Complex reasoning, multi-file refactoring, critical logic, long-horizon agentic tasks | **Opus 4.8** (`claude-opus-4-8`) |
 | Standard code generation, explanations, moderate complexity | **Sonnet 4.6** (`claude-sonnet-4-6`) |
-| Classification, data extraction, boilerplate, basic summaries | **Haiku 4.5** (`claude-haiku-4-5-20251001`) |
+| Classification, data extraction, boilerplate, basic summaries | **Haiku 4.5** (`claude-haiku-4-5`) |
 
 Format:
-> "Routing: this task is [simple/moderate/complex] → use **[Model]**. Estimated output: ~[N] tokens."
+> "Routing: this task is [simple/moderate/complex] → use **[Model]**."
 
-If the task does not need Fable 5, say so before proceeding. Let the user redirect to a cheaper model if they choose.
+Use **Fable 5** (`claude-fable-5`) only when the user explicitly requests it or the task requires its unique extended context or speed capabilities.
