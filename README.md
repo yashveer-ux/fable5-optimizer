@@ -1,4 +1,4 @@
-# token-optimizer-skill
+# Fable 5 token-optimizer-skill
 
 A Claude Code skill that loads at session start and enforces five token cost-reduction strategies for Fable 5 sessions. Optimized for developers who want to cut API costs without changing how they work.
 
@@ -11,6 +11,15 @@ Once installed, every Claude Code session automatically applies:
 3. **Output verbosity cap** — no preamble, no trailing summaries, right-sized `max_tokens` on API calls
 4. **Context clearing prompts** — offers handoff summaries on long threads (20+ turns)
 5. **Model routing** — recommends Opus 4.8, Sonnet 4.6, or Haiku 4.5 when Fable 5 is overkill
+
+### Model routing table
+
+| Task type | Recommended model | Input price | Output price |
+|-----------|------------------|-------------|--------------|
+| Complex reasoning, multi-file refactoring, long-horizon agentic tasks | Opus 4.8 (`claude-opus-4-8`) | $5/MTok | $25/MTok |
+| Standard code generation, explanations, moderate complexity | Sonnet 4.6 (`claude-sonnet-4-6`) | $3/MTok | $15/MTok |
+| Classification, data extraction, boilerplate, basic summaries | Haiku 4.5 (`claude-haiku-4-5`) | $1/MTok | $5/MTok |
+| Frontier reasoning, explicit user request only | Fable 5 (`claude-fable-5`) | $10/MTok | $50/MTok |
 
 ## Projected cost savings
 
